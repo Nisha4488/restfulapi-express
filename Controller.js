@@ -1,80 +1,53 @@
 
-const users = [{
-  id:1,
-  name: 'Dilip',
-  email: 'dilip.kumar2k6@gmail.com',
-  age: 35
-},
-{
-  id:2,
-  name: 'Nisha',
-  email: 'me.nisha.bharti@gmail.com',
-  age: 30
-}
-];
-const findOneAndUpdate=(user)=>{
-  var index = -1;
+const MongodbService =require('./MongodbService')
 
-  for(let i=0;i<users.length;i++){
-  // const userId = parseInt(req.params.id);
-  // const user = users.find(element => element.id === userId);
-  if(users[i].id===user.id){
-    index = i;
-    break;
-  }
-}
-if(index===-1){
-users.push(user)
-}
-else{
-users[index]={...users[index], ...user}
-}
-}
+  // Create instance of MongiodbService
+const mongodbService = new  MongodbService();
+
 class Controller {
-  static handleGetUsers(req, res) {
-    res.json(users)
+  static async handleGetUsers(req, res) {
+    // Initialize db
+    await mongodbService.init()
+    // Call getAllUsers to get the users
+    const allUsers = await mongodbService.getAllUsers()
+    // Return all users
+    res.json(allUsers)
   }
 
-  static handleOneUser(req,res){
-    const userId = parseInt(req.params.id);
-    const user = users.find(element => element.id === userId);
-    res.json(user)
+  static async handleOneUser(req,res){
+    await mongodbService.init()
+    const userId = req.params.id;
+    const findUser = await mongodbService.getOneUser(userId)
+    res.json(findUser)
   }
 
-  static handleAddUser(req,res){
-
-    const addUser = req.body
-  findOneAndUpdate(addUser)
-res.json(addUser)
+  static async handleAddUser(req,res){
+    const userObject =req.body
+    await mongodbService.init()
+    const newUser = await mongodbService.addUser(userObject)
+    res.json(newUser)
 }
+  //
+  // static handleUpdateUser(req,res){
+  //
+  //   const updateUser=req.body
+  //   findOneAndUpdate(updateUser)
+  //   res.json(updateUser)
+  // }
 
-  static handleUpdateUser(req,res){
-
-    const updateUser=req.body
-    findOneAndUpdate(updateUser)
-    res.json(updateUser)
+  static async handlePartialUpdateUser(req,res){
+    await mongodbService.init()
+    const userId=req.params.id
+    const userObject= req.body
+    const updatedUser= await mongodbService.updateUser(userId, userObject)
+    res.json(updatedUser)
   }
 
-  static handlePartialUpdateUser(req,res){
-
-    const handlePartialUpdateUser =req.body
-    findOneAndUpdate(handlePartialUpdateUser)
-    res.json(handlePartialUpdateUser)
+  static async handleDeleteUser(req,res){
+    await mongodbService.init()
+    const userId = req.params.id;
+    const deleteUser= await mongodbService.deleteUser(userId)
+    res.json(deleteUser)
   }
-
-  static handleDeleteUser(req,res){
-    const userId = parseInt(req.params.id);
-    let user;
-  for(let i=0;i<users.length;i++){
-    if(users[i].id===userId){
-      user=users[i]
-      users.splice(i,1)
-      break;
-    }
-  }
-  res.json(user)
-  }
-
 }
-
 module.exports = Controller;

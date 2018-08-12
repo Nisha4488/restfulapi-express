@@ -8,13 +8,15 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 const Controller = require('./Controller');
 
+
+
 app.get('/users', Controller.handleGetUsers);
 
 app.get('/users/:id', Controller.handleOneUser);
 
 app.post('/users', Controller.handleAddUser);
 
-app.put('/users/:id', Controller.handleUpdateUser);
+// app.put('/users/:id', Controller.handleUpdateUser);
 
 app.patch('/users/:id', Controller.handlePartialUpdateUser);
 
